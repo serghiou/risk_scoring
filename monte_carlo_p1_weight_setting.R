@@ -6,18 +6,31 @@ setwd(this.dir)
 if("ggplot2" %in% rownames(installed.packages())==FALSE){install.packages("ggplot2"); require(ggplot2)}else{require(ggplot2)}
 if("ggpubr" %in% rownames(installed.packages())==FALSE){install.packages("ggpubr"); require(ggpubr)}else{require(ggpubr)}
 if("reshape2" %in% rownames(installed.packages())==FALSE){install.packages("reshape2"); require(reshape2)}else{require(reshape2)}
+if("useful" %in% rownames(installed.packages())==FALSE){install.packages("useful"); require(useful)}else{require(useful)}
 
-#Gaussian plume appraoch
-  
+#Gaussian plume approach
+
+
 points<-100000
+
+#---- using spherical coordinates -----------
+
+#rho = 3D distance from emitter
+rho<-runif(points, 0, 6)
+theta<-runif(points,0,2*pi)
+phi<-runif(points,0,pi)
   
-x<-runif(points,0,6)
-y<-runif(points,-6,6)
-z<-runif(points,-.5,.5)
+x<-rho*sin(phi)*cos(theta)
+y<-rho*sin(phi)*sin(theta)
+z<-rho*cos(phi)
+
 
 #source of plume is at (0,0,0)
 
-distance.3D<-sqrt(x^2 + y^2 + z^2)
+#check on distances...
+test<-4
+sqrt(x[test]^2 + y[test]^2 + z[test]^2)
+rho[test]
   
     
 C.emit<- 11.5*10^6 #copies/cm3 (high emitter but asymptomatic) (conver to per m^3)
