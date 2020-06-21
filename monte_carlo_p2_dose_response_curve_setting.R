@@ -7,6 +7,7 @@ if("ggplot2" %in% rownames(installed.packages())==FALSE){install.packages("ggplo
 if("ggpubr" %in% rownames(installed.packages())==FALSE){install.packages("ggpubr"); require(ggpubr)}else{require(ggpubr)}
 if("reshape2" %in% rownames(installed.packages())==FALSE){install.packages("reshape2"); require(reshape2)}else{require(reshape2)}
 if("useful" %in% rownames(installed.packages())==FALSE){install.packages("useful"); require(useful)}else{require(useful)}
+if("lamW" %in% rownames(installed.packages())==FALSE){install.packages("lamW"); require(lamW)}else{require(lamW)}
 
 #Gaussian plume approach
 
@@ -53,7 +54,9 @@ fraction.infectious<-runif(points,0.0001,0.01)
 #concentration at given x, y, z points
 C<-(Q/U)*(1/(2*pi*omega.y*omega.z*1))*exp(-y^2/(2*omega.y^2))*exp(-z^2/(2*omega.z^2))*fraction.infectious
   
-I<-(runif(points,min=5.92,max=28.81)/(24*60)) # will change to Gaussian
+I<-(rnorm(points,mean=16.3,sd=4.15)/(24*60)) # will change to Gaussian
+#the 95th percentile was 24.6. (24.6 - 16.3)/2 was used to estimate standard deviation (assuming inhalation rates
+#are normally distributed)
 
 duration<-30 #placeholder just so units make sense
 
