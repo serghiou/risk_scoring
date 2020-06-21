@@ -36,7 +36,7 @@ rho[test]
 C.emit<- 11.5*10^6 #copies/cm3 (high emitter but asymptomatic) (conver to per m^3)
     
   
-Q<-C.emit * (runif(points,min=5.92,28.81)/(24*60*60)) #viral particles/m^3 x m^3/s exhalation rates (Exposure Factors Handbook)
+Q<-C.emit * (rnorm(points,mean=16.3,sd=4.15)/(24*60*60)) #viral particles/m^3 x m^3/s exhalation rates (Exposure Factors Handbook)
 
 U<-runif(points,min=1.3,max=1.4) #wind speed (m/s), used breathing velocity, Tang et al. (2013), mouth breathing (min) and nose breathing (max)
   
@@ -53,7 +53,7 @@ fraction.infectious<-runif(points,0.0001,0.01)
 #concentration at given x, y, z points
 C<-(Q/U)*(1/(2*pi*omega.y*omega.z*1))*exp(-y^2/(2*omega.y^2))*exp(-z^2/(2*omega.z^2))*fraction.infectious
   
-I<-(runif(points,min=5.92,max=28.81)/(24*60)) # will change to Gaussian
+I<-(rnorm(points,mean=16.3,sd=4.15)/(24*60))
 
 duration<-30 #placeholder just so units make sense
 
