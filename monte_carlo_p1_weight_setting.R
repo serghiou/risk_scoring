@@ -18,7 +18,7 @@ points<-100000
 #rho = 3D distance from emitter
 rho<-runif(points, 0, 6)
 theta<-runif(points,0,2*pi)
-phi<-runif(points,0,pi)
+phi<-runif(points,0,pi) #going to inform with Zhang et al. work
   
 x<-rho*sin(phi)*cos(theta)
 y<-rho*sin(phi)*sin(theta)
@@ -53,7 +53,7 @@ fraction.infectious<-runif(points,0.0001,0.01)
 #concentration at given x, y, z points
 C<-(Q/U)*(1/(2*pi*omega.y*omega.z*1))*exp(-y^2/(2*omega.y^2))*exp(-z^2/(2*omega.z^2))*fraction.infectious
   
-I<-(runif(points,min=5.92,max=28.81)/(24*60))
+I<-(runif(points,min=5.92,max=28.81)/(24*60)) # will change to Gaussian
 
 duration<-30 #placeholder just so units make sense
 
