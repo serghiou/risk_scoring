@@ -18,7 +18,7 @@ points<-100000
 #rho = 3D distance from emitter
 rho<-runif(points, 0, 6)
 theta<-runif(points,0,2*pi)
-phi<-runif(points,0,pi) #going to inform with Zhang et al. work
+phi<-runif(points,0,pi) #going to inform with Zhang et al. work - emailed on 6/21 to ask for mean and SD of head pitch angle
   
 x<-rho*sin(phi)*cos(theta)
 y<-rho*sin(phi)*sin(theta)
