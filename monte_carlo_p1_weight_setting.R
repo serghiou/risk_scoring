@@ -128,7 +128,13 @@ plot3
 ggarrange(plot2,plot3)
 
 plot2B<-ggplot(frame[frame$Dose>1,])+geom_violin(aes(x=attenuation,y=Dose))+theme_pubr()+
-  scale_y_continuous(trans="log10")
+  #scale_y_continuous(trans="log10")
+  
+length(frame[frame$Dose>1e4,])/length(frame$Dose)
+
+var(frame.output$Dose)
+
+write.csv(frame.output,"frame.output.csv")
 
 ggarrange(plot2B,plot3)
 
