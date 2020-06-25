@@ -132,7 +132,7 @@ frame.LIS$distance<-sqrt((frame.LIS$LIS[frame.LIS$scenario=="Spouse, 6 hours"]-0
 ggplot(frame.LIS)+geom_point(aes(x=lambda,y=LIS,colour=log10(distance),shape=scenario))+
   geom_hline(yintercept=0.28,linetype="solid",colour="red",size=1,alpha=0.5)+
   geom_hline(yintercept=0.17,linetype="dashed",colour="red",size=1,alpha=0.5)+
-  geom_vline(xintercept=6.5e-6,linetype="dashed",colour="green",size=1,alpha=0.5)+
+  geom_vline(xintercept=mean(frame.LIS$lambda[frame.LIS$distance==min(frame.LIS$distance)]),linetype="dashed",colour="green",size=1,alpha=0.5)+
   scale_y_continuous(trans="log10",name="Infection Risk")+
   scale_x_continuous(name="lambda",trans="log10")+theme_pubr()
 
