@@ -89,7 +89,7 @@ frame.all<-rbind(frame.spouse,frame.nonspouse)
 
 rLISest <- function(n, mu, sd, lambda) {
   #IS Estimator of e^{-lambda X}
-  Y <- rnorm(n,mean = mu, sd = sd)
+  Y <- rnorm(n,mean=0, sd = sd)
   Wu <- lambertW0(sd*lambda)
   Nu <- exp(-(Wu^2)*(exp(Y)-1-Y))
   LIS <- 1 - exp(-lambda * mu)*exp(-((Wu^2) * 2*Wu)/(2*sd))*Nu
@@ -128,7 +128,7 @@ for (j in 1:length(scenario)){
 
 frame.LIS$distance<-sqrt((frame.LIS$LIS[frame.LIS$scenario=="Spouse, 6 hours"]-0.28)^2+(frame.LIS$LIS[frame.LIS$scenario=="Nonspouse, 3 hours"]-0.17)^2)
 
-  
+windows()
 ggplot(frame.LIS)+geom_point(aes(x=lambda,y=LIS,colour=log10(distance),shape=scenario))+
   geom_hline(yintercept=0.28,linetype="solid",colour="red",size=1,alpha=0.5)+
   geom_hline(yintercept=0.17,linetype="dashed",colour="red",size=1,alpha=0.5)+
