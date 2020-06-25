@@ -7,97 +7,129 @@ if("ggplot2" %in% rownames(installed.packages())==FALSE){install.packages("ggplo
 if("ggpubr" %in% rownames(installed.packages())==FALSE){install.packages("ggpubr"); require(ggpubr)}else{require(ggpubr)}
 if("reshape2" %in% rownames(installed.packages())==FALSE){install.packages("reshape2"); require(reshape2)}else{require(reshape2)}
 if("useful" %in% rownames(installed.packages())==FALSE){install.packages("useful"); require(useful)}else{require(useful)}
+if("truncdist" %in% rownames(installed.packages())==FALSE){install.packages("truncdist"); require(truncdist)}else{require(truncdist)}
 if("lamW" %in% rownames(installed.packages())==FALSE){install.packages("lamW"); require(lamW)}else{require(lamW)}
 
-#Gaussian plume approach
-
-
-points<-100000
-
-#---- using spherical coordinates -----------
-
-#rho = 3D distance from emitter
-rho<-runif(points, 0, 6)
-theta<-runif(points,0,2*pi)
-phi<-runif(points,0,pi) #going to inform with Zhang et al. work
+dataforlambda<-function(duration,spouse=c('TRUE'),iter){
   
-x<-rho*sin(phi)*cos(theta)
-y<-rho*sin(phi)*sin(theta)
-z<-rho*cos(phi)
-
-
-#source of plume is at (0,0,0)
-
-#check on distances...
-test<-4
-sqrt(x[test]^2 + y[test]^2 + z[test]^2)
-rho[test]
+  #duration = # of hours of contact
+  #spouse = TRUE for spouse scenario, FALSE for adults in same household scenario
+  #iter = number of iterations per time step
   
+  duration.halfhour<-duration*2 #number of half hour time steps
+  
+  #assume close contact, so phi = pi/2 and theta = 0 (on x-axis, face-to-face with emitter)
+  y=0
+  z=0
+  
+  #holding constant for now - will account for variability in this param later on...
+  C.emit<-11.5*10^6 #copies/cm3 (high emitter but asymptomatic) (conver to per m^3)
+  
+  #initializing vector for final dose saving
+  final.dose<-rep(NA,iter)
+  
+  for (j in 1:iter){
     
-C.emit<- 11.5*10^6 #copies/cm3 (high emitter but asymptomatic) (conver to per m^3)
+    #Gaussian plume approach
+      
+    #preparing vectors for loop
+    x<-runif(duration.halfhour,0.5,1) #distance in m away from emitter
+    X<-(rtrunc(duration.halfhour,"norm",a=0,mean=16.3,sd=4.15)/(24*60*60)) #exhalation rates in m^3/s
+    A<-runif(duration.halfhour,23,59)/(100^2) #cross section of mouth in m^2 (converted from cm^2)
+    U<-X/A
+    I.y<-runif(duration.halfhour,0.08,0.25)
+    I.z<-runif(duration.halfhour,0.03,0.07)
+    omega.y<-I.y*x
+    omega.z<-I.z*x
     
+    Q<-C.emit * X #viral particles/m^3 x m^3/s exhalation rates (Exposure Factors Handbook)
+    C<-(Q/U)*(1/(2*pi*omega.y*omega.z*1))*exp(-y^2/(2*omega.y^2))*exp(-z^2/(2*omega.z^2))
+    I<-(rtrunc(duration.halfhour,"norm",a=0,mean=16.3,sd=4.15)/(24*60)) #inhalation rates in m^3/s
+    
+    Dose.cumulative<-rep(NA,duration.halfhour)
+    
+    Dose.cumulative[1]<-C[1]*I[1]*(30*60) #dose in first half hour
+    
+    for (i in 2:duration.halfhour){
+      Dose.cumulative[i]<-Dose.cumulative[i-1]+(C[i]*I[i]*(30*60))
+      
+    }#end of for loop for calculating cumulative dose for iter j
+
+    final.dose[j]<-Dose.cumulative[duration.halfhour]
+    
+    #saving frames
+    if (j==1){
+      frame<-data.frame(Dose=Dose.cumulative,spouse=spouse,duration=duration,j=j,x=x,X=X,A=A,I.y=I.y,I.z=I.z,C=C,I=I)
+    }else{
+      frametemp<-data.frame(Dose=Dose.cumulative,spouse=spouse,duration=duration,j=j,x=x,X=X,A=A,I.y=I.y,I.z=I.z,C=C,I=I)
+      frame<-rbind(frame,frametemp)
+    }
+ 
+  }#end of iter
   
-Q<-C.emit * (rnorm(points,mean=16.3,sd=4.15)/(24*60*60)) #viral particles/m^3 x m^3/s exhalation rates (Exposure Factors Handbook)
-
-U<-runif(points,min=1.3,max=1.4) #wind speed (m/s), used breathing velocity, Tang et al. (2013), mouth breathing (min) and nose breathing (max)
+  #save frame globally
+  frame.save<<-frame
+  final.dose.all<<-final.dose
   
-#moderately stable
-I.y<-runif(points,0.08,0.25)
-I.z<-runif(points,0.03,0.07)
+} #end of function
+
+#6 hours, face-to-face, spouse
+
+dataforlambda(6,TRUE,10000)
+frame.spouse<-frame.save
+final.dose.spouse<-final.dose.all
+
+dataforlambda(3,FALSE,10000)
+frame.nonspouse<-frame.save
+final.dose.nonspouse<-final.dose.all
+
+frame.all<-rbind(frame.spouse,frame.nonspouse)
+
+#-------------lam W section ------------------------------------
+
+rLISest <- function(n, mu, sd, lambda) {
+  #IS Estimator of e^{-lambda X}
+  Y <- rnorm(n,mean = mu, sd = sd)
+  Wu <- lambertW0(sd*lambda)
+  Nu <- exp(-(Wu^2)*(exp(Y)-1-Y))
+  LIS <- 1 - exp(-lambda * mu)*exp(-((Wu^2) * 2*Wu)/(2*sd))*Nu
+  LIS.output<<-LIS
+}
+
+n<-100000
+sd<-log(10)
+seq<-seq(from=-11,to=-3,by=1)
+
+scenario<-c("Spouse, 6 hours","Nonspouse, 3 hours")
+
+for (j in 1:length(scenario)){
   
-omega.y<-I.y*x
-omega.z<-I.z*x
+  if (j==1){
+    mu<-log(mean(final.dose.spouse))
+  }else{
+    mu<-log(mean(final.dose.nonspouse))
+  }
   
-#fraction of genome copies relates to infectious particles
-fraction.infectious<-runif(points,0.0001,0.01)
+  for (i in 1:length(seq)){
+    
+    lambda<-1*10^seq[i]
+    
+    rLISest(n=n,mu=mu,sd=sd,lambda=lambda)
+    
+    if(i==1 & j==1){
+      frame.LIS<-data.frame(LIS=LIS.output,lambda=lambda,scenario=scenario[j])
+    }else{
+      frametemp<-data.frame(LIS=LIS.output,lambda=lambda,scenario=scenario[j])
+      frame.LIS<-rbind(frame.LIS,frametemp)
+    }
+    
+  }
+}
 
-#concentration at given x, y, z points
-C<-(Q/U)*(1/(2*pi*omega.y*omega.z*1))*exp(-y^2/(2*omega.y^2))*exp(-z^2/(2*omega.z^2))*fraction.infectious
+
   
-I<-(rnorm(points,mean=16.3,sd=4.15)/(24*60))
-#the 95th percentile was 24.6. (24.6 - 16.3)/2 was used to estimate standard deviation (assuming inhalation rates
-#are normally distributed)
-
-duration<-30 #placeholder just so units make sense
-
-#viral particles/m^3 x m^3/min x min
-Dose<-C*I*duration
-  
-frame<-data.frame(x=x,y=y,z=z,C=C,distance.3D=distance.3D,Dose=Dose,fraction.infectious=fraction.infectious,
-                  omega.y=omega.y,omega.z=omega.z,Q.U=Q/U,I=I)
-
-
-#assignment of distance ranges to our current bin categories
-frame$attenuation.distance<-rep(NA,length(frame$x))
-frame$attenuation.distance[frame$distance.3D<=.5]<-"<=.5 m"
-frame$attenuation.distance[frame$distance.3D>.5 & frame$distance.3D<=2]<-">.5 m & <=2 m"
-frame$attenuation.distance[frame$distance.3D>2]<-">2 m"
-
-#----------------------------------------------spearman corr coeff-----------------------------------------------------
-
-framecor = subset(frame,select=-c(attenuation.distance))
-
-cormat<-cor(framecor,method=c("spearman"))
-melted_cormat<-melt(cormat)
-ggplot(data=melted_cormat,aes(x=Var1,y=Var2,fill=value))+geom_tile()+
-  geom_text(aes(label = signif(value, 2))) +
-  scale_fill_gradient(low = "white", high = "blue")
-
-#-------------------------------------------------------------- Doses -----------------------------------------------------------------------------------------------
-
-#non-zero doses
-A<-ggplot(frame[frame$Dose>0,])+geom_density(aes(x=log10(Dose)))+
-  facet_wrap(~attenuation.distance)+
-  theme_pubr()+
-  scale_x_continuous(name=expression("Log"[10]*phantom(x)*"Dose"))+
-  scale_y_continuous(name="Density")
-
-windows()
-A
-
-#------------------------ Ratios of Dose based on Distance -----------------------------------------------
-
-
-mean(frame$Dose[frame$attenuation.distance=="<=.5 m"]) / mean(frame$Dose[frame$attenuation.distance==">.5 m & <=2 m"])
-mean(frame$Dose[frame$attenuation.distance==">2 m"])/mean(frame$Dose[frame$attenuation.distance==">.5 m & <=2 m"])
+ggplot(frame.LIS)+geom_violin(aes(x=scenario,y=LIS,fill=scenario),draw_quantiles = c(0.25,0.5,0.75))+
+  scale_y_continuous(trans="log10",name="Infection Risk")+
+  scale_x_discrete(name="Scenario")+theme_pubr()+
+  facet_wrap(~lambda,scales="free")
 
