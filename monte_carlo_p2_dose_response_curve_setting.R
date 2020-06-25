@@ -93,12 +93,12 @@ rLISest <- function(n, mu, sd, lambda) {
   Wu <- lambertW0(sd*lambda)
   Nu <- exp(-(Wu^2)*(exp(Y)-1-Y))
   LIS <- 1 - exp(-lambda * mu)*exp(-((Wu^2) * 2*Wu)/(2*sd))*Nu
-  LIS.output<<-LIS
+  LIS.output<<-mean(LIS)
 }
 
-n<-100000
+n<-10000
 sd<-log(10)
-seq<-seq(from=-11,to=-3,by=1)
+seq<-runif(n,-8,-4)
 
 scenario<-c("Spouse, 6 hours","Nonspouse, 3 hours")
 
@@ -126,10 +126,13 @@ for (j in 1:length(scenario)){
   }
 }
 
+frame.LIS$distance<-sqrt((frame.LIS$LIS[frame.LIS$scenario=="Spouse, 6 hours"]-0.28)^2+(frame.LIS$LIS[frame.LIS$scenario=="Nonspouse, 3 hours"]-0.17)^2)
 
   
-ggplot(frame.LIS)+geom_violin(aes(x=scenario,y=LIS,fill=scenario),draw_quantiles = c(0.25,0.5,0.75))+
+ggplot(frame.LIS)+geom_point(aes(x=lambda,y=LIS,colour=log10(distance),shape=scenario))+
+  geom_hline(yintercept=0.28,linetype="solid",colour="red",size=1,alpha=0.5)+
+  geom_hline(yintercept=0.17,linetype="dashed",colour="red",size=1,alpha=0.5)+
+  geom_vline(xintercept=6.5e-6,linetype="dashed",colour="green",size=1,alpha=0.5)+
   scale_y_continuous(trans="log10",name="Infection Risk")+
-  scale_x_discrete(name="Scenario")+theme_pubr()+
-  facet_wrap(~lambda,scales="free")
+  scale_x_continuous(name="lambda",trans="log10")+theme_pubr()
 
