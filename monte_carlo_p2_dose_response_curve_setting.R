@@ -105,9 +105,9 @@ scenario<-c("Spouse, 6 hours","Nonspouse, 3 hours")
 for (j in 1:length(scenario)){
   
   if (j==1){
-    mu<-log(mean(final.dose.spouse))
+    mu<-mean(log(final.dose.spouse))
   }else{
-    mu<-log(mean(final.dose.nonspouse))
+    mu<-mean(log(final.dose.nonspouse))
   }
   
   for (i in 1:length(seq)){
