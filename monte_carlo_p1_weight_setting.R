@@ -56,7 +56,7 @@ sqrt(x[test]^2 + y[test]^2 + z[test]^2)
 rho[test]
   
 #holding constant for weight setting
-C.emit<- 11.5*10^6 #copies/cm3 (high emitter but asymptomatic) (conver to per m^3)
+C.emit<-50 #in arbitrary units
 
 #exhalation rates
 X<-(rtrunc(points,"norm",a=0,mean=16.3,sd=4.15)/(24*60*60))

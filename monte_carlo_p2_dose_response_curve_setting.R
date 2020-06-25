@@ -22,8 +22,7 @@ dataforlambda<-function(duration,spouse=c('TRUE'),iter){
   y=0
   z=0
   
-  #holding constant for now - will account for variability in this param later on...
-  C.emit<-11.5*10^6 #copies/cm3 (high emitter but asymptomatic) (conver to per m^3)
+  C.emit<-50 #in arbitrary units
   
   #initializing vector for final dose saving
   final.dose<-rep(NA,iter)
@@ -47,21 +46,23 @@ dataforlambda<-function(duration,spouse=c('TRUE'),iter){
     I<-(rtrunc(duration.halfhour,"norm",a=0,mean=16.3,sd=4.15)/(24*60)) #inhalation rates in m^3/s
     
     Dose.cumulative<-rep(NA,duration.halfhour)
+    time<-rep(NA,duration.halfhour)
     
     Dose.cumulative[1]<-C[1]*I[1]*(30*60) #dose in first half hour
+    time[1]<-1
     
     for (i in 2:duration.halfhour){
       Dose.cumulative[i]<-Dose.cumulative[i-1]+(C[i]*I[i]*(30*60))
-      
+      time[i]<-i
     }#end of for loop for calculating cumulative dose for iter j
 
     final.dose[j]<-Dose.cumulative[duration.halfhour]
     
     #saving frames
     if (j==1){
-      frame<-data.frame(Dose=Dose.cumulative,spouse=spouse,duration=duration,j=j,x=x,X=X,A=A,I.y=I.y,I.z=I.z,C=C,I=I)
+      frame<-data.frame(time=time,Dose=Dose.cumulative,spouse=spouse,duration=duration,j=j,x=x,X=X,A=A,I.y=I.y,I.z=I.z,C=C,I=I)
     }else{
-      frametemp<-data.frame(Dose=Dose.cumulative,spouse=spouse,duration=duration,j=j,x=x,X=X,A=A,I.y=I.y,I.z=I.z,C=C,I=I)
+      frametemp<-data.frame(time=time,Dose=Dose.cumulative,spouse=spouse,duration=duration,j=j,x=x,X=X,A=A,I.y=I.y,I.z=I.z,C=C,I=I)
       frame<-rbind(frame,frametemp)
     }
  
@@ -75,15 +76,24 @@ dataforlambda<-function(duration,spouse=c('TRUE'),iter){
 
 #6 hours, face-to-face, spouse
 
-dataforlambda(6,TRUE,10000)
+dataforlambda(10,TRUE,10000)
 frame.spouse<-frame.save
 final.dose.spouse<-final.dose.all
 
-dataforlambda(3,FALSE,10000)
+dataforlambda(1,FALSE,10000)
 frame.nonspouse<-frame.save
 final.dose.nonspouse<-final.dose.all
 
 frame.all<-rbind(frame.spouse,frame.nonspouse)
+
+frame.dose<-data.frame(dose=c(final.dose.spouse,final.dose.nonspouse),c(rep("scenario 1",length(final.dose.spouse)),
+                                                                   rep("scenario 2",length(final.dose.nonspouse))))
+ggplot(frame.dose)+geom_density(aes(x=dose,group=dose))
+ggplot(frame.all)+geom_point(aes(x=time,y=Dose,colour=duration))
+
+mean(log(frame.all$Dose[frame.all$time==20]))
+mean(log(frame.all$Dose[frame.all$duration==1 & frame.all$time==2]))
+
 
 #-------------lam W section ------------------------------------
 
@@ -98,9 +108,9 @@ rLISest <- function(n, mu, sd, lambda) {
 
 n<-10000
 sd<-log(10)
-seq<-runif(n,-8,-4)
+seq<-runif(n,-4,2)
 
-scenario<-c("Spouse, 6 hours","Nonspouse, 3 hours")
+scenario<-c("Spouse, 10 hours","Nonspouse, 1 hour")
 
 for (j in 1:length(scenario)){
   
@@ -126,13 +136,13 @@ for (j in 1:length(scenario)){
   }
 }
 
-frame.LIS$distance<-sqrt((frame.LIS$LIS[frame.LIS$scenario=="Spouse, 6 hours"]-0.28)^2+(frame.LIS$LIS[frame.LIS$scenario=="Nonspouse, 3 hours"]-0.17)^2)
+frame.LIS$distance<-sqrt((frame.LIS$LIS[frame.LIS$scenario=="Spouse, 10 hours"]-0.28)^2+(frame.LIS$LIS[frame.LIS$scenario=="Nonspouse, 1 hour"]-0.17)^2)
 
 windows()
-ggplot(frame.LIS)+geom_point(aes(x=lambda,y=LIS,colour=log10(distance),shape=scenario))+
+B<-ggplot(frame.LIS)+geom_point(aes(x=lambda,y=LIS,colour=log10(distance),shape=scenario))+
   geom_hline(yintercept=0.28,linetype="solid",colour="red",size=1,alpha=0.5)+
   geom_hline(yintercept=0.17,linetype="dashed",colour="red",size=1,alpha=0.5)+
   geom_vline(xintercept=mean(frame.LIS$lambda[frame.LIS$distance==min(frame.LIS$distance)]),linetype="dashed",colour="green",size=1,alpha=0.5)+
   scale_y_continuous(trans="log10",name="Infection Risk")+
-  scale_x_continuous(name="lambda",trans="log10")+theme_pubr()
+  scale_x_continuous(name="lambda",trans="log10")+theme_pubr()+ggtitle("Transform Method")
 
