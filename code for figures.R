@@ -99,12 +99,8 @@ windows()
 ggarrange(A,B)
 
 
-#panel 2
-
-
 
 #------------------------------------ figure 2 -------------------------------------------------------------
-
 
 
 subframe6<-frame[frame$risk.start==0.0505 & frame$days<=7 & frame$fraction.asymptomatic==0.25,]
