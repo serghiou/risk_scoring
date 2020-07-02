@@ -53,8 +53,6 @@ subframe$quarantine2<-subframe$risks<=0.0241
 
 #------------------------------------- figure 1 ------------------------------------------------------------
 
-#panel 1
-
 subframe1<-subframe[subframe$risk.start==0.0505 & subframe$days<=10,]
 subframe2<-subframe[subframe$risk.start==0.0505 & subframe$days<=6,]
 subframe3<-subframe[subframe$risk.start==0.0505 & subframe$days<=14,]
@@ -129,4 +127,7 @@ A.2<-ggplot(frame[frame$risk.start==0.0505,],aes(x=days,y=risks))+
 
 windows()
 A.2
+
+#negative test scenario
+
 
