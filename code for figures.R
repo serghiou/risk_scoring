@@ -8,7 +8,7 @@
 
 risk.discount<-read.csv('risk_discount_data.csv')
 
-
+figure2<-read.csv('figure2_data.csv')
 
 
 #initial risk
@@ -42,6 +42,8 @@ for (j in 1:length(risk.start)){
   }
 }
 
+frame$days<-frame$days-1
+
 require(ggplot2)
 require(ggpubr)
 
@@ -53,43 +55,44 @@ subframe$quarantine2<-subframe$risks<=0.0241
 
 #------------------------------------- figure 1 ------------------------------------------------------------
 
-subframe1<-subframe[subframe$risk.start==0.0505 & subframe$days<=10,]
-subframe2<-subframe[subframe$risk.start==0.0505 & subframe$days<=6,]
-subframe3<-subframe[subframe$risk.start==0.0505 & subframe$days<=14,]
-tempframe<-data.frame(risks=0.0241,days=6.8,risk.start=0.0505,fraction.asymptomatic=0.15,quarantine1=FALSE,quarantine2=TRUE)
+subframe1<-subframe[subframe$risk.start==0.0505 & subframe$days<=9,]
+subframe2<-subframe[subframe$risk.start==0.0505 & subframe$days<=5,]
+
+subframe3<-subframe[subframe$risk.start==0.0505 & subframe$days<=13,]
+tempframe<-data.frame(risks=0.0241,days=5,risk.start=0.0505,fraction.asymptomatic=0.15,quarantine1=FALSE,quarantine2=TRUE)
 subframe2<-rbind(subframe2,tempframe)
 A<-ggplot(subframe[subframe$risk.start==0.0505,],aes(x=days,y=risks))+
-  geom_area(data=subframe1,aes(x = ifelse(days<=10 , days, 0)),fill="red",alpha=0.3)+
-  geom_area(data=subframe2,aes(x = ifelse(days<=6.8 , days, 0)),fill="blue",alpha=0.3)+
-  geom_area(data=subframe3,aes(x = ifelse(days<=14 , days, 0)),fill="grey",alpha=0.3)+
+  geom_area(data=subframe1,aes(x = ifelse(days<=9 , days, 0)),fill="red",alpha=0.3)+
+  geom_area(data=subframe2,aes(x = ifelse(days<=5 , days, 0)),fill="blue",alpha=0.3)+
+  geom_area(data=subframe3,aes(x = ifelse(days<=13 , days, 0)),fill="grey",alpha=0.3)+
   geom_point(size=3)+
   geom_hline(yintercept=0.01,linetype="dashed",size=1)+
-  geom_hline(yintercept=0.0241,linetype="dashed",size=1)+
+  geom_hline(yintercept=0.03,linetype="dashed",size=1)+
   geom_hline(yintercept=0.0063,linetype="dashed",size=1)+
   scale_colour_discrete(name="Scenario",labels=c("Peak Shedding in Index Case","Low Shedding in Index Case"))+
   scale_x_continuous(name="Days Since Exposure")+
-  scale_y_continuous(name="Risk of Infection")+
+  scale_y_continuous(name="Risk of Infection",limits = c(0, 0.051))+
   annotate("text",x=19,y=0.012,label="1% Threshold: Quarantine for 10 days",size=6.5)+
-  annotate("text",x=19,y=0.0261,label="2.41% Threshold: Quarantine for 6 days",size=6.5)+
+  annotate("text",x=19,y=0.0321,label="3% Threshold: Quarantine for 5 days",size=6.5)+
   annotate("text",x=19,y=0.0079,label="0.63% Threshold: Quarantine for 14 days",size=6.5)+
   theme_pubr()+theme(axis.title.x = element_text(size=20),axis.title.y = element_text(size=20),title = element_text(size=20),
                      axis.text=element_text(size=15))+
   ggtitle("A. Peak Shedding in Index Case")
 
-subframe4<-subframe[subframe$risk.start==0.0103 & subframe$days<=3,]
-subframe5<-subframe[subframe$risk.start==0.0103 & subframe$days<=14,]
+subframe4<-subframe[subframe$risk.start==0.0103 & subframe$days<=2,]
+subframe5<-subframe[subframe$risk.start==0.0103 & subframe$days<=13,]
 B<-ggplot(subframe[subframe$risk.start==0.0103,],aes(x=days,y=risks))+
-  geom_area(data=subframe4,aes(x = ifelse(days<=3 , days, 0)),fill="red",alpha=0.3)+
-  geom_area(data=subframe5,aes(x = ifelse(days<=14 , days, 0)),fill="grey",alpha=0.3)+
+  geom_area(data=subframe4,aes(x = ifelse(days<=2 , days, 0)),fill="red",alpha=0.3)+
+  geom_area(data=subframe5,aes(x = ifelse(days<=13 , days, 0)),fill="grey",alpha=0.3)+
   geom_point(size=3)+
   geom_hline(yintercept=0.01,linetype="dashed",size=1)+
-  geom_hline(yintercept=0.0241,linetype="dashed",size=1)+
+  geom_hline(yintercept=0.03,linetype="dashed",size=1)+
   geom_hline(yintercept=0.001293,linetype="dashed",size=1)+
   scale_colour_discrete(name="Scenario",labels=c("Peak Shedding in Index Case","Low Shedding in Index Case"))+
   scale_x_continuous(name="Days Since Exposure")+
-  scale_y_continuous(name="Risk of Infection",limits = c(0, 0.05))+
-  annotate("text",x=19,y=0.012,label="1 % Threshold: Quarantine for 3 days",size=6.5)+
-  annotate("text",x=19,y=0.0261,label="2.41 % Threshold: Quarantine for 0 days",size=6.5)+
+  scale_y_continuous(name="Risk of Infection",limits = c(0, 0.051))+
+  annotate("text",x=19,y=0.012,label="1% Threshold: Quarantine for 3 days",size=6.5)+
+  annotate("text",x=19,y=0.0321,label="3% Threshold: Quarantine for 0 days",size=6.5)+
   annotate("text",x=19,y=0.0033,label="0.13% Threshold: Quarantine for 14 days",size=6.5)+
   theme_pubr()+theme(axis.title.x = element_text(size=20),axis.title.y = element_text(size=20),title=element_text(size=20),
                      axis.text=element_text(size=15))+
@@ -103,35 +106,55 @@ ggarrange(A,B)
 #------------------------------------ figure 2 -------------------------------------------------------------
 
 
-subframe6<-frame[frame$risk.start==0.0505 & frame$days<=7 & frame$fraction.asymptomatic==0.25,]
-tempframe<-data.frame(risks=0.0241,days=7.2,risk.start=0.0505,fraction.asymptomatic=0.25)
+subframe6<-frame[frame$risk.start==0.0505 & frame$days<=5 & frame$fraction.asymptomatic==0.25,]
+tempframe<-data.frame(risks=0.03,days=5.3,risk.start=0.0505,fraction.asymptomatic=0.25)
 subframe6<-rbind(subframe6,tempframe)
 
-
-subframe7<-frame[frame$risk.start==0.0505 & frame$days<=10 & frame$fraction.asymptomatic==0.5,]
+subframe7<-frame[frame$risk.start==0.0505 & frame$days<=7 & frame$fraction.asymptomatic==0.5,]
 
 A.2<-ggplot(frame[frame$risk.start==0.0505,],aes(x=days,y=risks))+
   geom_point(aes(shape=as.character(fraction.asymptomatic),colour=as.character(fraction.asymptomatic)),size=4,alpha=0.8)+
-  geom_area(data=subframe2,aes(x = ifelse(days<=7 , days, 0)),fill="blue",alpha=0.3)+
-  geom_area(data=subframe6,aes(x = ifelse(days<=7.2 , days, 0)),fill="red",alpha=0.3)+
-  geom_area(data=subframe7,aes(x = ifelse(days<=10 , days, 0)),fill="grey",alpha=0.3)+
+  geom_area(data=subframe2,aes(x = ifelse(days<=5.67 , days, 0)),fill="blue",alpha=0.3)+
+  geom_area(data=subframe6,aes(x = ifelse(days<=5.3 , days, 0)),fill="red",alpha=0.3)+
+  geom_area(data=subframe7,aes(x = ifelse(days<=7 , days, 0)),fill="grey",alpha=0.3)+
   scale_shape_discrete(name="% Asymptomatic",labels=c("15%", "25%", "50%"))+
   scale_colour_discrete(name="% Asymptomatic",labels=c("15%", "25%", "50%"))+
   scale_x_continuous(name="Days Since Exposure")+
   scale_y_continuous(name="Risk of Infection",limits = c(0, 0.051))+
-  geom_hline(yintercept=0.0241,linetype="dashed",size=1)+
-  annotate("text",x=19,y=0.035,label="2.41% Threshold",size=6.5)+
-  annotate("text",x=19,y=0.032,label="Quarantine for 6 days (15% Asymptomatic)",size=6.5)+
-  annotate("text",x=19,y=0.029,label="Quarantine for 7 days (25% Asymptomatic)",size=6.5)+
-  annotate("text",x=19,y=0.026,label="Quarantine for 10 days (50% Asymptomatic)",size=6.5)+
+  geom_hline(yintercept=0.03,linetype="dashed",size=1)+
+  annotate("text",x=19,y=0.041,label="3% Threshold",size=6.5)+
+  annotate("text",x=19,y=0.038,label="Quarantine for 5 days (15% Asymptomatic)",size=6.5)+
+  annotate("text",x=19,y=0.035,label="Quarantine for 6 days (25% Asymptomatic)",size=6.5)+
+  annotate("text",x=19,y=0.032,label="Quarantine for 7 days (50% Asymptomatic)",size=6.5)+
   theme_pubr()+theme(axis.title.x = element_text(size=20),axis.title.y = element_text(size=20),
                      legend.text = element_text(size=20), legend.title=element_text(size=20),
                      axis.text=element_text(size=20),title=element_text(size=20))+
-  ggtitle("A. Peak Shedding in Index Case")
+  ggtitle("A. Varying Asymptomatic %")
 
 windows()
 A.2
 
 #negative test scenario
+days<-c(frame$days[frame$risk.start==0.0505 & frame$fraction.asymptomatic==0.15],figure2$Days)
+risks<-c(frame$risks[frame$risk.start==0.0505 & frame$fraction.asymptomatic==0.15],figure2$Risktest)
+type<-c(rep("No test",length(frame$days[frame$risk.start==0.0505 & frame$fraction.asymptomatic==0.15])),
+        rep("Negative Test Result",length(figure2$Days)))
+frame2<-data.frame(days=days,risks=risks,type=type)
+frame2<-frame2[frame2$days<=14,]
+
+subframe8<-frame2[frame2$type=="Negative Test Result" & frame2$days<=5,]
+
+ggplot(data=frame2)+geom_point(aes(x=days,y=risks,group=type,colour=type,shape=type),size=3)+
+  geom_hline(yintercept=0.0241,linetype="dashed",size=1)+
+  geom_area(data=subframe2,aes(x = ifelse(days<=5.67 , days, 0),y=risks),fill="blue",alpha=0.3)+
+  #geom_area(data=subframe9,aes(x = ifelse(days<=5 , days, 0),y=risks),fill="red",alpha=0.3)+
+  theme_pubr()+theme(axis.title.x = element_text(size=20),axis.title.y = element_text(size=20),
+                   legend.text = element_text(size=20), legend.title=element_text(size=20),
+                   axis.text=element_text(size=20),title=element_text(size=20))+
+  scale_colour_discrete(name="")+
+  scale_shape_discrete(name="")+
+  scale_x_continuous(name="Days Since Exposure")+
+  scale_y_continuous(name="Risk of Infection",limits = c(0, 0.051))+
+  ggtitle("B. No Test vs. Negative Test Result")
 
 
