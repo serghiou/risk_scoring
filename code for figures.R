@@ -17,9 +17,9 @@ figure2<-read.csv('figure2_data.csv')
 0.0505
 
 #lowest risk individual, 15 min close contact
-0.0103
+0.0052
 
-risk.start<-c(0.0505,0.0103)
+risk.start<-c(0.0505,0.0052)
 
 #fraction expected to be asymptomatic
 fraction.asymptomatic<-c(0.15,0.25,0.50)
@@ -79,21 +79,20 @@ A<-ggplot(subframe[subframe$risk.start==0.0505,],aes(x=days,y=risks))+
                      axis.text=element_text(size=15))+
   ggtitle("A. Peak Shedding in Index Case")
 
-subframe4<-subframe[subframe$risk.start==0.0103 & subframe$days<=2,]
-subframe5<-subframe[subframe$risk.start==0.0103 & subframe$days<=13,]
-B<-ggplot(subframe[subframe$risk.start==0.0103,],aes(x=days,y=risks))+
-  geom_area(data=subframe4,aes(x = ifelse(days<=2 , days, 0)),fill="red",alpha=0.3)+
+subframe4<-subframe[subframe$risk.start==0.0052 & subframe$days<=2,]
+subframe5<-subframe[subframe$risk.start==0.0052 & subframe$days<=13,]
+B<-ggplot(subframe[subframe$risk.start==0.0052,],aes(x=days,y=risks))+
   geom_area(data=subframe5,aes(x = ifelse(days<=13 , days, 0)),fill="grey",alpha=0.3)+
   geom_point(size=3)+
   geom_hline(yintercept=0.01,linetype="dashed",size=1)+
   geom_hline(yintercept=0.03,linetype="dashed",size=1)+
-  geom_hline(yintercept=0.001293,linetype="dashed",size=1)+
+  geom_hline(yintercept=0.0006532285,linetype="dashed",size=1)+
   scale_colour_discrete(name="Scenario",labels=c("Peak Shedding in Index Case","Low Shedding in Index Case"))+
   scale_x_continuous(name="Days Since Exposure")+
   scale_y_continuous(name="Risk of Infection",limits = c(0, 0.051))+
-  annotate("text",x=19,y=0.012,label="1% Threshold: Quarantine for 3 days",size=6.5)+
+  annotate("text",x=19,y=0.012,label="1% Threshold: Quarantine for 0 days",size=6.5)+
   annotate("text",x=19,y=0.0321,label="3% Threshold: Quarantine for 0 days",size=6.5)+
-  annotate("text",x=19,y=0.0033,label="0.13% Threshold: Quarantine for 14 days",size=6.5)+
+  annotate("text",x=19,y=0.0022,label="0.065% Threshold: Quarantine for 14 days",size=6.5)+
   theme_pubr()+theme(axis.title.x = element_text(size=20),axis.title.y = element_text(size=20),title=element_text(size=20),
                      axis.text=element_text(size=15))+
   ggtitle("B. Low Shedding in Index Case")
