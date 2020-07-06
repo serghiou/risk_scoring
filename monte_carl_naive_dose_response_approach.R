@@ -38,7 +38,7 @@ dataforlambda<-function(duration,spouse=c('TRUE'),iter){
     omega.y<-I.y*x
     omega.z<-I.z*x
     
-    C.emit<-rlnorm(duration.halfhour,meanlog=log(100),sdlog=log(10)) #in arbitrary units
+    C.emit<-rlnorm(duration.halfhour,meanlog=log(100),sdlog=log(20)) #in arbitrary units
     
     Q<-C.emit * X #viral particles/m^3 x m^3/s exhalation rates (Exposure Factors Handbook)
     C<-(Q/U)*(1/(2*pi*omega.y*omega.z*1))*exp(-y^2/(2*omega.y^2))*exp(-z^2/(2*omega.z^2))
@@ -91,7 +91,7 @@ frame.dose<-data.frame(dose=c(final.dose.spouse,final.dose.nonspouse),c(rep("sce
 
 
 n<-10000
-seq<-runif(n,-5,-2)
+seq<-runif(n,-7,-2)
 
 scenario<-c("Spouse, 6 hours","Nonspouse, 3.5 hours")
 
