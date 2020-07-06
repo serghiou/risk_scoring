@@ -116,31 +116,33 @@ InterOptAB <- function(x) {
   ExDC <- mean(dtC$Dose)
   
   DistOut <- sqrt( (2*pA*pB)*((ExDA - ExDB)^2) + (2*pB*pC)*((ExDB - ExDC)^2))# + (2*pC*pA)*((ExDC - ExDA)^2))
-  #data.frame(ExpDose = c(ExDA,ExDB,ExDC), LocProb = c(pA,pB,pC),Metric = rep(DistOut,3))
-  return(data.frame(ExpDose = c(ExDA,ExDB,ExDC), BinFreq = c(pA,pB,pC),Metric = rep(DistOut,3)))
+  # Dataframe output for reporting results as necessary, rather than optimization of bins
+  return(DistOut) #data.frame(ExpDose = c(ExDA,ExDB,ExDC), BinFreq = c(pA,pB,pC),Metric = rep(DistOut,3)))
 }
 
 
-
+# Samples an ordered tuple within the current bounds of available data with at least a 10 dB difference
 nextfun <- function(x) {
   a = sample(30:75,1,replace = T)
   b = sample((a+10):85,1,replace = T)
   return(c(a,b))
 }
 
-
+# Generates first set of 5 tuples and corresponding metric outputs
 tuples <- lapply(1:5, nextfun)
 luples <- sapply(tuples, InterOptAB)
 df.uples <- data.frame(tup = matrix(unlist(tuples), nrow=length(tuples), byrow = T), out = luples)
 
+# There will be index errors as available data in a range may be sparse; interate this code until the dataframe
+# is sufficiently large 
 tuples <- lapply(1:5, nextfun)
 luples <- sapply(tuples, InterOptAB)
 df.uples <- rbind(df.uples, data.frame(tup = matrix(unlist(tuples), nrow=length(tuples), byrow = T), out = luples))
 df.uples
 
 df.sorted <- df.uples[order(-df.uples$out),]
-#InterOptAB(c(25,52))
 
+# Resamples the 10 best tuples for greater precison in ordering
 df.max <- head(df.sorted,10)
 df.maxtest <- df.max
 for (i in 1:length(df.max$out)) {
@@ -152,5 +154,6 @@ for (i in 1:length(df.max$out)) {
 }
 df.mmax <- df.maxtest[order(-df.maxtest$out),]
 
+# Example of a general function call
 InterOptAB(c(35,50))
 InterOptAB(c(50,70))
