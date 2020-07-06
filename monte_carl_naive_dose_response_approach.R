@@ -38,20 +38,20 @@ dataforlambda<-function(duration,spouse=c('TRUE'),iter){
     omega.y<-I.y*x
     omega.z<-I.z*x
     
-    C.emit<-rlnorm(duration.halfhour,meanlog=log(50),sdlog=log(10)) #in arbitrary units
+    C.emit<-rlnorm(duration.halfhour,meanlog=log(100),sdlog=log(10)) #in arbitrary units
     
     Q<-C.emit * X #viral particles/m^3 x m^3/s exhalation rates (Exposure Factors Handbook)
     C<-(Q/U)*(1/(2*pi*omega.y*omega.z*1))*exp(-y^2/(2*omega.y^2))*exp(-z^2/(2*omega.z^2))
-    I<-(rtrunc(duration.halfhour,"norm",a=0,mean=16.3,sd=4.15)/(24*60)) #inhalation rates in m^3/s
+    I<-(rtrunc(duration.halfhour,"norm",a=0,mean=16.3,sd=4.15)/(24*60)) #inhalation rates in m^3/min
     
     Dose.cumulative<-rep(NA,duration.halfhour)
     time<-rep(NA,duration.halfhour)
     
-    Dose.cumulative[1]<-C[1]*I[1]*(30*60) #dose in first half hour
+    Dose.cumulative[1]<-C[1]*I[1]*(30) #dose in first half hour
     time[1]<-1
     
     for (i in 2:duration.halfhour){
-      Dose.cumulative[i]<-Dose.cumulative[i-1]+(C[i]*I[i]*(30*60))
+      Dose.cumulative[i]<-Dose.cumulative[i-1]+(C[i]*I[i]*(30))
       time[i]<-i
     }#end of for loop for calculating cumulative dose for iter j
     
@@ -75,11 +75,11 @@ dataforlambda<-function(duration,spouse=c('TRUE'),iter){
 
 #6 hours, face-to-face, spouse
 
-dataforlambda(6,TRUE,10000)
+dataforlambda(90,TRUE,10000)
 frame.spouse<-frame.save
 final.dose.spouse<-final.dose.all
 
-dataforlambda(3.5,FALSE,10000)
+dataforlambda(52.5,FALSE,10000)
 frame.nonspouse<-frame.save
 final.dose.nonspouse<-final.dose.all
 
@@ -91,7 +91,7 @@ frame.dose<-data.frame(dose=c(final.dose.spouse,final.dose.nonspouse),c(rep("sce
 
 
 n<-10000
-seq<-runif(n,-7,-4)
+seq<-runif(n,-5,-2)
 
 scenario<-c("Spouse, 6 hours","Nonspouse, 3.5 hours")
 
