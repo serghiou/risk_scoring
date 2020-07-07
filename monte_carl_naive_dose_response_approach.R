@@ -93,7 +93,7 @@ frame.dose<-data.frame(dose=c(final.dose.spouse,final.dose.nonspouse),c(rep("sce
 n<-10000
 seq<-runif(n,-7,-2)
 
-scenario<-c("Spouse, 6 hours","Nonspouse, 3.5 hours")
+scenario<-c("Spouse","Nonspouse")
 
 for (j in 1:length(scenario)){
   
