@@ -47,7 +47,7 @@ InterOptAB <- function(x) {
   theta<-rep(NA,points)
   
   phi[rho<=1]<-pi/2
-  phi[rho>1]<-runif(length(phi[rho>1]),0,pi)
+  phi[rho>1]<- rtriangle(n = length(phi[rho>1]), a = pi/4, b = 3*pi/4, c = pi/2) #runif(length(phi[rho>1]), 0, pi)
   
   theta[rho<=1]<-0
   theta[rho>1]<-runif(length(theta[rho>1]),0,2*pi)
