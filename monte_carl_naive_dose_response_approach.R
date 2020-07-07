@@ -120,7 +120,7 @@ for (j in 1:length(scenario)){
 }
 
 
-frame.infect$distance<-sqrt((frame.infect$infect[frame.infect$scenario=="Spouse, 6 hours"]-0.28)^2+(frame.infect$infect[frame.infect$scenario=="Nonspouse, 3.5 hours"]-0.17)^2)
+frame.infect$distance<-sqrt((frame.infect$infect[frame.infect$scenario=="Spouse"]-0.28)^2+(frame.infect$infect[frame.infect$scenario=="Nonspouse"]-0.17)^2)
 
 windows()
 A<-ggplot(frame.infect)+geom_point(aes(x=lambda,y=infect,colour=log10(distance),shape=scenario))+
