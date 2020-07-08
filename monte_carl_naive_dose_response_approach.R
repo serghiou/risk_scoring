@@ -38,7 +38,7 @@ dataforlambda<-function(duration,spouse=c('TRUE'),iter){
     omega.y<-I.y*x
     omega.z<-I.z*x
     
-    C.emit<-rlnorm(duration.halfhour,meanlog=log(100),sdlog=log(20)) #in arbitrary units
+    C.emit<-rlnorm(duration.halfhour,meanlog=log(100),sdlog=log(16)) #in arbitrary units
     
     Q<-C.emit * X #viral particles/m^3 x m^3/s exhalation rates (Exposure Factors Handbook)
     C<-(Q/U)*(1/(2*pi*omega.y*omega.z*1))*exp(-y^2/(2*omega.y^2))*exp(-z^2/(2*omega.z^2))
@@ -75,11 +75,11 @@ dataforlambda<-function(duration,spouse=c('TRUE'),iter){
 
 #6 hours, face-to-face, spouse
 
-dataforlambda(90,TRUE,10000)
+dataforlambda(80,TRUE,10000)
 frame.spouse<-frame.save
 final.dose.spouse<-final.dose.all
 
-dataforlambda(52.5,FALSE,10000)
+dataforlambda(40,FALSE,10000)
 frame.nonspouse<-frame.save
 final.dose.nonspouse<-final.dose.all
 
@@ -120,12 +120,12 @@ for (j in 1:length(scenario)){
 }
 
 
-frame.infect$distance<-sqrt((frame.infect$infect[frame.infect$scenario=="Spouse"]-0.28)^2+(frame.infect$infect[frame.infect$scenario=="Nonspouse"]-0.17)^2)
+frame.infect$distance<-sqrt((frame.infect$infect[frame.infect$scenario=="Spouse"]-0.52)^2+(frame.infect$infect[frame.infect$scenario=="Nonspouse"]-0.3)^2)
 
 windows()
-A<-ggplot(frame.infect)+geom_point(aes(x=lambda,y=infect,colour=log10(distance),shape=scenario))+
-  geom_hline(yintercept=0.28,linetype="solid",colour="red",size=1,alpha=0.5)+
-  geom_hline(yintercept=0.17,linetype="dashed",colour="red",size=1,alpha=0.5)+
+A<-ggplot(frame.infect)+geom_point(aes(x=lambda,y=infect,colour=log10(distance)))+
+  geom_hline(yintercept=0.52,linetype="solid",colour="red",size=1,alpha=0.5)+
+  geom_hline(yintercept=0.30,linetype="dashed",colour="red",size=1,alpha=0.5)+
   geom_vline(xintercept=mean(frame.infect$lambda[frame.infect$distance==min(frame.infect$distance)]),linetype="dashed",colour="green",size=1,alpha=0.5)+
   scale_y_continuous(trans="log10",name="Infection Risk")+
   scale_x_continuous(name="lambda",trans="log10")+theme_pubr()+ggtitle("Naive Method")
