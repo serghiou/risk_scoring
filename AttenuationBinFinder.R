@@ -12,8 +12,6 @@ if("truncdist" %in% rownames(installed.packages())==FALSE){install.packages("tru
 library(dplyr)
 #Load in MonteCarloDistanceAtten - values for dB and distance piece
 
-dtPoint<-read.csv('MonteCarloDistanceAtten.csv')
-dtPoint<-read.csv('MonteCarloData2.csv')
 dtPoint<-read.csv('PointData.csv')
 dtPoint <- na.omit(dtPoint %>% select(Distance, Attenuation))
 names(dtPoint) <- c("Distance", "MeanAtten")
@@ -155,5 +153,4 @@ for (i in 1:length(df.max$out)) {
 df.mmax <- df.maxtest[order(-df.maxtest$out),]
 
 # Example of a general function call
-InterOptAB(c(35,50))
-InterOptAB(c(50,70))
+InterOptAB(c(50,80))
