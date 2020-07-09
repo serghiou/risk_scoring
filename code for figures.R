@@ -129,19 +129,19 @@ type<-c(rep("No test",length(frame$days[frame$risk.start==high & frame$fraction.
 frame2<-data.frame(days=days,risks=risks,type=type)
 
 
-subframe8<-frame2[frame2$type=="Negative Test Result" & frame2$days<=11,]
+subframe8<-frame2[frame2$type=="Negative Test Result" & frame2$days<=9,]
 
 windows()
 B.2<-ggplot(data=frame2)+geom_point(aes(x=days,y=risks,group=type,colour=type,shape=type),size=4)+
     geom_hline(yintercept=1.394392e-03,linetype="dashed",size=1)+
     geom_vline(xintercept=4,linetype="solid",size=1)+
-    geom_area(data=subframe8,aes(x = ifelse(days<=11 , days, 0),y=risks),fill="blue",alpha=0.3)+
+    geom_area(data=subframe8,aes(x = ifelse(days<=9 , days, 0),y=risks),fill="blue",alpha=0.3)+
     geom_area(data=subframe7,aes(x = ifelse(days<=25 , days, 0),y=risks),fill="red",alpha=0.3)+
     theme_pubr()+theme(axis.title.x = element_text(size=20),axis.title.y = element_text(size=20),
                    legend.text = element_text(size=20), legend.title=element_text(size=20),
                    axis.text=element_text(size=20),title=element_text(size=20))+
     annotate("text",x=18,y=0.012,label="0.14% Threshold",size=6.5)+
-    annotate("text",x=18,y=0.010,label="Quarantine for 12 days with Testing",size=6.5)+
+    annotate("text",x=18,y=0.010,label="Quarantine for 10 days with Testing",size=6.5)+
     annotate("text",x=18,y=0.009,label="Quarantine for 26 days without Testing",size=6.5)+
     scale_colour_discrete(name="",labels=c("Negative Test Result on Day 4","No Test"))+
     scale_shape_discrete(name="",labels=c("Negative Test Result on Day 4","No Test"))+
