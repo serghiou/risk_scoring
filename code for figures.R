@@ -67,7 +67,7 @@ A<-ggplot(subframe[subframe$risk.start==high,],aes(x=days,y=risks))+
   geom_hline(yintercept=1.394392e-03,linetype="dashed",size=1)+
   scale_colour_discrete(name="Scenario",labels=c("Peak Shedding in Index Case","Low Shedding in Index Case"))+
   scale_x_continuous(name="Days Since Exposure")+
-  scale_y_continuous(name="Probability of Infection",limits = c(0, 0.015))+
+  scale_y_continuous(name="Probability of current or future infectiousness",limits = c(0, 0.015))+
   annotate("text",x=17,y=0.012,label="0.84% Threshold: Quarantine for 5 days",size=6.5)+
   annotate("text",x=17,y=0.010,label="0.14% Threshold: Quarantine for 14 days",size=6.5)+
   theme_pubr()+theme(axis.title.x = element_text(size=20),axis.title.y = element_text(size=20),title = element_text(size=20),
@@ -82,7 +82,7 @@ B<-ggplot(subframe[subframe$risk.start==low,],aes(x=days,y=risks))+
   geom_hline(yintercept=1.381830e-04,linetype="dashed",size=1)+
   scale_colour_discrete(name="Scenario",labels=c("Peak Shedding in Index Case","Low Shedding in Index Case"))+
   scale_x_continuous(name="Days Since Exposure")+
-  scale_y_continuous(name="Probability of Infection",limits = c(0, 0.015))+
+  scale_y_continuous(name="Probability of current or future infectiousness",limits = c(0, 0.015))+
   annotate("text",x=17,y=0.0025,label="0.014% Threshold: Quarantine for 14 days",size=6.5)+
   theme_pubr()+theme(axis.title.x = element_text(size=20),axis.title.y = element_text(size=20),title=element_text(size=20),
                      axis.text=element_text(size=15))+
@@ -107,7 +107,7 @@ A.2<-ggplot(frame[frame$risk.start==high,],aes(x=days,y=risks))+
   scale_shape_discrete(name="% Asymptomatic",labels=c("15%", "25%", "50%"))+
   scale_colour_discrete(name="% Asymptomatic",labels=c("15%", "25%", "50%"))+
   scale_x_continuous(name="Days Since Exposure")+
-  scale_y_continuous(name="Probability of Infection",limits = c(0, 0.015))+
+  scale_y_continuous(name="Probability of current or future infectiousness",limits = c(0, 0.015))+
   geom_hline(yintercept=1.394392e-03,linetype="dashed",size=1)+
   annotate("text",x=18,y=0.012,label="0.14% Threshold",size=6.5)+
   annotate("text",x=18,y=0.010,label="Quarantine for 14 days (15% Asymptomatic)",size=6.5)+
@@ -146,7 +146,7 @@ B.2<-ggplot(data=frame2)+geom_point(aes(x=days,y=risks,group=type,colour=type,sh
     scale_colour_discrete(name="",labels=c("Negative Test Result on Day 4","No Test"))+
     scale_shape_discrete(name="",labels=c("Negative Test Result on Day 4","No Test"))+
     scale_x_continuous(name="Days Since Exposure")+
-    scale_y_continuous(name="Probability of Infection",limits = c(0, 0.015))+
+    scale_y_continuous(name="Probability of current or future infectiousness",limits = c(0, 0.015))+
     ggtitle("B. No Test vs. Negative Test Result")
 
 
