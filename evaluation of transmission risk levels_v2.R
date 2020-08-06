@@ -30,9 +30,9 @@ distance<-c(rep("<50 dB",length(time)),rep("50-80 dB",length(time)),rep(">80 dB"
 frame.plot.3<-data.frame(dose=dose.1,risk=risk.1,time=time,distance=distance)
 
 #scenario 2, high shedder
-dose.close.2<-time*2.75*compare$Risk.value[compare$Days.since.post.symptom.onset==0]
-dose.mid.2<-time*1.06*compare$Risk.value[compare$Days.since.post.symptom.onset==0]
-dose.far.2<-time*0.27*compare$Risk.value[compare$Days.since.post.symptom.onset==0]
+dose.close.2<-time*2.39*compare$Risk.value[compare$Days.since.post.symptom.onset==0]
+dose.mid.2<-time*0.6*compare$Risk.value[compare$Days.since.post.symptom.onset==0]
+dose.far.2<-time*0.06*compare$Risk.value[compare$Days.since.post.symptom.onset==0]
 
 dose.2<-c(dose.close.2,dose.mid.2,dose.far.2)
 
