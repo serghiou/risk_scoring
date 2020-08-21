@@ -66,14 +66,15 @@ A<-ggplot(subframe[subframe$risk.start==high,],aes(x=days,y=risks))+
   geom_point(size=3)+
   geom_hline(yintercept=8.5e-03,linetype="dashed",size=1)+
   geom_hline(yintercept=1.3e-03,linetype="dashed",size=1)+
-  scale_colour_discrete(name="Scenario",labels=c("Peak Shedding in Index Case","Low Shedding in Index Case"))+
+  scale_colour_discrete(name="Scenario",labels=c("Peak Shedding in Transmitter","Low Shedding in Transmitter"))+
   scale_x_continuous(name="Days Since Exposure")+
   scale_y_continuous(name="Probability of current or future infectiousness",limits = c(0, 0.015))+
-  annotate("text",x=16,y=0.012,label="0.85% Threshold: Quarantine for 5 days",size=6.5)+
-  annotate("text",x=16,y=0.010,label="0.13% Threshold: Quarantine for 14 days",size=6.5)+
+  annotate("text",x=15,y=0.010,label="0.85% Threshold: Quarantine for 5 days",size=6.5)+
+  annotate("text",x=15,y=0.009,label="0.13% Threshold: Quarantine for 14 days",size=6.5)+
+  annotate("text",x=12,y=.015,label="A. Peak Shedding in Transmitter",size=10)+
   theme_pubr()+theme(axis.title.x = element_text(size=20),axis.title.y = element_text(size=20),title = element_text(size=20),
-                     axis.text=element_text(size=15))+
-  ggtitle("A. Peak Shedding in Index Case")
+                     axis.text=element_text(size=15))
+  #ggtitle("A. Peak Shedding in Transmitter")
 A
 
 subframe5<-subframe[subframe$risk.start==low & subframe$days<=13,]
@@ -81,13 +82,15 @@ B<-ggplot(subframe[subframe$risk.start==low,],aes(x=days,y=risks))+
   geom_area(data=subframe5,aes(x = ifelse(days<=13 , days, 0)),fill="grey",alpha=0.3)+
   geom_point(size=3)+
   geom_hline(yintercept=1.3e-04,linetype="dashed",size=1)+
-  scale_colour_discrete(name="Scenario",labels=c("Peak Shedding in Index Case","Low Shedding in Index Case"))+
+  scale_colour_discrete(name="Scenario",labels=c("Peak Shedding in Transmitter","Low Shedding in Transmitter"))+
   scale_x_continuous(name="Days Since Exposure")+
   scale_y_continuous(name="Probability of current or future infectiousness",limits = c(0, 0.015))+
-  annotate("text",x=16,y=0.0025,label="0.013% Threshold: Quarantine for 14 days",size=6.5)+
+  annotate("text",x=15,y=0.0025,label="0.013% Threshold: Quarantine for 14 days",size=6.5)+
   theme_pubr()+theme(axis.title.x = element_text(size=20),axis.title.y = element_text(size=20),title=element_text(size=20),
                      axis.text=element_text(size=15))+
-  ggtitle("B. Low Shedding in Index Case")
+  annotate("text",x=12,y=.015,label="B. Low Shedding in Transmitter",size=10)
+  #ggtitle("B. Low Shedding in Transmitter")
+
 B
 windows()
 ggarrange(A,B)
