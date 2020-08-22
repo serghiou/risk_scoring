@@ -70,7 +70,7 @@ A<-ggplot(subframe[subframe$risk.start==high,],aes(x=days,y=risks))+
   scale_x_continuous(name="Days Since Exposure")+
   scale_y_continuous(name="Probability of current or future infectiousness",limits = c(0, 0.015))+
   annotate("text",x=15,y=0.010,label="0.85% Threshold: Quarantine for 5 days",size=6.5)+
-  annotate("text",x=15,y=0.009,label="0.13% Threshold: Quarantine for 14 days",size=6.5)+
+  annotate("text",x=15,y=0.0030,label="0.13% Threshold: Quarantine for 14 days",size=6.5)+
   annotate("text",x=12,y=.015,label="A. Peak Shedding in Transmitter",size=10)+
   theme_pubr()+theme(axis.title.x = element_text(size=20),axis.title.y = element_text(size=20),title = element_text(size=20),
                      axis.text=element_text(size=15))
@@ -85,7 +85,7 @@ B<-ggplot(subframe[subframe$risk.start==low,],aes(x=days,y=risks))+
   scale_colour_discrete(name="Scenario",labels=c("Peak Shedding in Transmitter","Low Shedding in Transmitter"))+
   scale_x_continuous(name="Days Since Exposure")+
   scale_y_continuous(name="Probability of current or future infectiousness",limits = c(0, 0.015))+
-  annotate("text",x=15,y=0.0025,label="0.013% Threshold: Quarantine for 14 days",size=6.5)+
+  annotate("text",x=15,y=0.0030,label="0.013% Threshold: Quarantine for 14 days",size=6.5)+
   theme_pubr()+theme(axis.title.x = element_text(size=20),axis.title.y = element_text(size=20),title=element_text(size=20),
                      axis.text=element_text(size=15))+
   annotate("text",x=12,y=.015,label="B. Low Shedding in Transmitter",size=10)
