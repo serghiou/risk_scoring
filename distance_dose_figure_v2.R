@@ -145,21 +145,6 @@ frame<-rbind(frame.close,frame.far)
 frame$threshold<-factor(frame$threshold,levels=c("0.5","1","2"))
   colors <- c("dose" = "black", "risk*5" = "red")
   
-windows()
-ggplot(data=frame)+
-    #geom_vline(xintercept=1,linetype="dashed",size=2)+
-    geom_point(aes(x=distance,y=dose,color="dose",group=randomangle),size=5)+
-    geom_line(aes(x=distance,y=dose,color="dose",group=randomangle))+
-    geom_point(aes(x=distance,y=risk*10,color="risk*5",group=randomangle),size=5)+
-    geom_line(aes(x=distance,y=risk*10,color="risk*5",group=randomangle))+
-    #annotate("text",x=1.2,y=4.8,label=c("Close Contact Threshold"),angle=90,size=4.7)+
-    scale_y_continuous(name = "Dose (arbitrary units)", sec.axis = sec_axis(trans=~./10, name="Probability of Infection"),trans="log10")+
-    scale_colour_manual(values=colors,labels=c("Dose","Infection Risk"),name="")+theme_pubr()+
-    scale_x_continuous(name="Distance from Emitter (m)")+
-    theme(axis.text = element_text(size=18),axis.title = element_text(size=20),legend.text = element_text(size=20),strip.text=element_text(size=18))+facet_wrap(~randomangle)
-
-frame$randomangle[frame$randomangle=="far"]<-"Original"
-frame$randomangle[frame$randomangle=="close"]<-"Sensitivity"
 
 windows()
 ggplot(data=frame)+
