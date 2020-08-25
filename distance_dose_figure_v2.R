@@ -104,7 +104,7 @@ threshold.contact<-function(randomangle="close"){
   #viral particles/m^3 x m^3/min x min
   Dose<-C*I*duration
   
-  k<-3.10E-6
+  k<-3.50E-6
   
   #Infection risk
   risk<-1-exp(-Dose*k)
