@@ -13,7 +13,7 @@ figure2<-read.csv('figure2_data.csv')
 
 #initial risk
 
-lambda<-3.10E-6
+lambda<-3.50E-6
 
 weighted.sum<-35.85
 
