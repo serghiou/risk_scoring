@@ -153,7 +153,7 @@ ggplot(data=frame)+
   geom_line(aes(x=distance,y=dose,color="dose",group=randomangle,alpha=randomangle))+
   geom_point(aes(x=distance,y=risk*10,color="risk*5",group=randomangle,alpha=randomangle),size=5)+
   geom_line(aes(x=distance,y=risk*10,color="risk*5",group=randomangle,alpha=randomangle))+
-  scale_alpha_discrete(range=c(1,0.3),name="",labels=c("Original Model","Sensitivity Model"))+
+  scale_alpha_discrete(range=c(0.3,1),name="")+
   scale_colour_manual(values=colors,labels=c("Dose","Probability of Infection"),name="")+theme_pubr()+
   scale_y_continuous(name = "Dose (arbitrary units)", sec.axis = sec_axis(trans=~./10, name="Probability of Infection"),trans="log10")+
   theme_pubr()+
