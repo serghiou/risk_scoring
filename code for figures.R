@@ -8,14 +8,14 @@
 
 risk.discount<-read.csv('risk_discount_data.csv')
 
-figure2<-read.csv('figure2_data.csv')
+figure4<-read.csv('figure4_data.csv')
 
 
 #initial risk
 
 lambda<-3.50E-6
 
-weighted.sum<-35.85
+weighted.sum<-31.53
 
 #highest risk individual 15 min close contact
 high<-1-exp(-lambda*(weighted.sum*1e2)) #high shedder: 1 x 10^2
@@ -64,12 +64,12 @@ A<-ggplot(subframe[subframe$risk.start==high,],aes(x=days,y=risks))+
   geom_area(data=subframe1,aes(x = ifelse(days<=4 , days, 0)),fill="red",alpha=0.3)+
   geom_area(data=subframe3,aes(x = ifelse(days<=13 , days, 0)),fill="grey",alpha=0.3)+
   geom_point(size=3)+
-  geom_hline(yintercept=8.5e-03,linetype="dashed",size=1)+
+  geom_hline(yintercept=8.4e-03,linetype="dashed",size=1)+
   geom_hline(yintercept=1.3e-03,linetype="dashed",size=1)+
   scale_colour_discrete(name="Scenario",labels=c("Peak Shedding in Transmitter","Low Shedding in Transmitter"))+
   scale_x_continuous(name="Days Since Exposure")+
   scale_y_continuous(name="Probability of current or future infectiousness",limits = c(0, 0.015))+
-  annotate("text",x=15,y=0.010,label="0.85% Threshold: Quarantine for 5 days",size=6.5)+
+  annotate("text",x=15,y=0.010,label="0.84% Threshold: Quarantine for 5 days",size=6.5)+
   annotate("text",x=15,y=0.0030,label="0.13% Threshold: Quarantine for 14 days",size=6.5)+
   annotate("text",x=12,y=.015,label="A. Peak Shedding in Transmitter",size=10)+
   theme_pubr()+theme(axis.title.x = element_text(size=20),axis.title.y = element_text(size=20),title = element_text(size=20),
