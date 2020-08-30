@@ -1,4 +1,6 @@
-# risk_scoring - This repository contains code used to produce results in "Quantifying SARS-CoV-2 infection risk within the Apple/Google exposure notification framework to inform quarantine recommendations," by AM Wilson, N Aviles, PI Beamer, Z Szabo, KC Ernst, and J Masel, available at: https://www.medrxiv.org/content/10.1101/2020.07.17.20156539v1
+# risk_scoring
+
+This repository contains code used to produce results in "Quantifying SARS-CoV-2 infection risk within the Apple/Google exposure notification framework to inform quarantine recommendations," by AM Wilson, N Aviles, PI Beamer, Z Szabo, KC Ernst, and J Masel, available at: https://www.medrxiv.org/content/10.1101/2020.07.17.20156539v1
 
 # Files for Generating Figures
 
