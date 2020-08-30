@@ -33,15 +33,22 @@ This file contains days since symptom onset (column 1), the associated risk valu
 
 System Requirements
 --------------------
+To run this code, you will need R and packages indicated in the code files in "require" or "install" statements and the data files described below. Code for generating figures was run using R version 4.0.2 on Windows 10 Home build 18363 with an Intel(R) Core(TM) i7-9750U CPU @ 2.60GHz processor. Typical run for threshold optimization time takes less than 5 minutes.
 
 AttenuationBinFinder.R
 ----------------------
 Code needed to generate optimal partition points for the ranges of attenuation bins
 
+AttenuationBinFinderNotebook.Rmd
+----------------------
+Suppliment to AttenuationBinFinder.R; follows the psuedo-data filtering and evaluation step by step.
+
 # Files for Supplemental Materials
 
 System Requirements
 ---------------------
+To run this code, you will need R and packages indicated in the code files in "require" or "install" statements and the data files described below. Code for generating figures was run using R version 4.0.2 on Windows 10 Home build 18363 with an Intel(R) Core(TM) i7-9750U CPU @ 2.60GHz processor. Typical run time per file for generating figures is roughly less than 15 seconds.
 
 fEX_vs_EfX-Infection_Prob.R
 ---------------------------
+Generates graphs comparing the result of additional variance on the convexity of the dose response curve under the parameters for the expected dose model.

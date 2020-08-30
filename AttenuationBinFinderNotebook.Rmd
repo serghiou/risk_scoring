@@ -1,0 +1,452 @@
+---
+title: "AttenuationBinFinder"
+author: "Nathan R. Aviles"
+date: "8/26/2020"
+output: pdf_document
+---
+Packages Setup
+```{r}
+if("truncdist" %in% rownames(installed.packages())==FALSE){install.packages("truncdist"); require(truncdist)}else{require(truncdist)}
+if("triangle" %in% rownames(installed.packages())==FALSE){install.packages("triangle"); require(triangle)}else{require(triangle)}
+if("dplyr" %in% rownames(installed.packages())==FALSE){install.packages("dplyr"); require(triangle)}else{require(dplyr)}
+```
+
+
+Attenuation/Distance Data Files:
+
+Filtered Data (As received from James)
+```{r}
+
+# Load in filtered observations - values for dB and distance
+dtPoint <- read.csv('filteredAttenuation.csv')
+
+# Corrects names for consistency
+names(dtPoint) <- c("Distance", "MeanAtten")
+
+# Dimensions of the Data frame (Most important is the number of observations)
+dim(dtPoint)
+# [1] 1035    2
+
+# Distribution of distances
+table(dtPoint$Distance)
+# 0.5   1 1.5   2   3   5 
+# 203 222 199 374  17  20 
+
+# Checks NAs for recorded distance
+sum(is.na(dtPoint$Distance))
+#[1] 0
+ 
+# Adds an extra column indicating that all observations are NOT blocked
+dtPoint <- cbind(dtPoint, BlockingBarrier = FALSE) #%>% filter(MeanAtten > 30)
+
+
+```
+
+Barrier blocked data:
+```{r}
+
+# Loads in unfiltered data
+dtBlock<-read.csv('rawAttenuation.csv')
+
+# Pulls out relevant values and factors (whether its and outlier, and whether the observation was blocked by a barrier)
+dtBlock <- dtBlock %>% select(Distance, MeanAtten, Outlier, BlockingBarrier)
+
+dim(dtBlock)
+#[1] 1558    4
+
+# Filtering out outliers
+dtBlock <- dtBlock %>% filter(Outlier == FALSE)
+
+# Reduce dataframe
+dtBlock <- dtBlock %>% select(Distance, MeanAtten, BlockingBarrier) 
+
+# Total number of initial observations before filtering
+dim(dtBlock)
+#[1] 1414    3
+
+# Distribution of distances
+table(dtBlock$Distance)
+#   0 0.5   1 1.5   2   3   5 
+# 249 231 250 228 401  17  20 
+
+```
+
+
+Dealing with NAs in the unfiltered data
+```{r}
+
+# Number of observations where data is unavailable
+sum(is.na(dtBlock$Distance))
+# [1] 18
+
+# Prints out the exact observations with unavailable data
+ObsNA <- is.na(dtBlock$Distance)
+dtBlock[ObsNA,]
+
+# From this we find that only 2/18 of the observations were NOT blocked
+
+# We will be removing all 'observations' (NOT blocked) of distance 0 as they provide no valid information for the proceeding model and reassign the blocked observation distances to 1 (this is arbitrary so that these points are included in the data set and there are no errors downstream - here we use the values of the BlockingBarrier T/F -> 1/0 for convenience)
+
+# to confirm the addition of 0s
+(q <- table(dtBlock$Distance))
+#   0 0.5   1 1.5   2   3   5 
+# 249 231 250 228 401  17  20  
+
+# Reassignment of distance
+dtBlock$Distance[ObsNA] <- as.numeric(dtBlock$BlockingBarrier[ObsNA])
+
+# Additions from the NAs
+table(dtBlock$Distance) - q
+# 0 0.5   1 1.5   2   3   5 
+# 2   0  16   0   0   0   0 
+
+# After reassignment
+table(dtBlock$Distance)
+#   0 0.5   1 1.5   2   3   5 
+# 251 231 266 228 401  17  20 
+
+# Current number of observations
+dim(dtBlock)
+# [1] 1414    3
+
+
+```
+
+Now we are safely back to the reported 1414 observations as we should be, as all we did was eliminate outliers and redistribute NAs.
+
+Eliminating the observations at distance 0
+```{r}
+# Current number of observations
+dim(dtBlock)
+#[1] 1414    3
+
+# Number of 0s being filtered
+sum(dtBlock$Distance == 0)
+#[1] 251 # 251 - 2 = 249 actually removed (NAs removed as well)
+
+dtBlock <- dtBlock %>% filter(Distance > 0)
+
+# Leftover observations
+dim(dtBlock)
+#[1] 1163    3
+
+table(dtBlock$Distance)
+# 0.5   1 1.5   2   3   5 
+# 231 266 228 401  17  20 
+
+```
+```{r}
+write.csv(dtBlock, file = "filtered_bare_no_NA_Outliers_or_0m.csv")
+```
+
+
+And now the pièce de résistance
+
+Filtering out only the blocked observations
+```{r}
+# Current total once again
+dim(dtBlock)
+# [1] 1163    3
+
+dtBlock <- dtBlock %>% filter(BlockingBarrier == TRUE)
+
+# And for comparison to the original filter
+dim(dtBlock)
+#[1] 128   3
+
+dim(dtPoint)
+#[1] 1035    3
+
+# And a perfect score!
+
+table(dtPoint$Distance)
+table(dtBlock$Distance)
+
+```
+
+
+
+Parameters for Monte Carlo Simulations/Psuedo data construction
+```{r}
+
+# Psuedo data parameters
+truncPoint <- 9
+Inflate <- c(1,1,1,1,2,3) # target ratio
+cc <- c(5,5,6,3,132,168) - 1 # number of copies included in the psuedo data set (total is the vector c() )
+dtPoint2 <- dtPoint
+
+```
+
+
+```{r}
+# Psuedo data: skip as necessary
+# There was a bug that forced me to run each loop individually
+dtPoint2 <- dtPoint
+
+# Tables are printed to check and make sure each loop runs properly
+N=0.5
+for (k in 1:cc[[1]]) {
+  dtPoint2 <- rbind(dtPoint2, dtPoint %>% filter(Distance == N))
+}
+table(dtPoint2$Distance)
+N=1
+for (k in 1:cc[[2]]) {
+  dtPoint2 <- rbind(dtPoint2, dtPoint %>% filter(Distance == N))
+}
+table(dtPoint2$Distance)
+N=1.5
+for (k in 1:cc[[3]]) {
+  dtPoint2 <- rbind(dtPoint2, dtPoint %>% filter(Distance == N))
+}
+table(dtPoint2$Distance)
+N=2
+for (k in 1:cc[[4]]) {
+  dtPoint2 <- rbind(dtPoint2, dtPoint %>% filter(Distance == N))
+}
+table(dtPoint2$Distance)
+N=3
+for (k in 1:cc[[5]]) {
+  dtPoint2 <- rbind(dtPoint2, dtPoint %>% filter(Distance == N))
+}
+table(dtPoint2$Distance)
+N=5
+for (k in 1:cc[[6]]) {
+  dtPoint2 <- rbind(dtPoint2, dtPoint %>% filter(Distance == N))
+}
+
+table(dtPoint2$Distance)
+```
+
+Monte Carlo Sampling function:
+```{r}
+set.seed(2020)
+# Reassign dtPoint2, or replace all following 'dtPoint2's with 'dtPoint'
+InterOptAB <- function(x) {
+  
+  a = x[1]
+  b = x[2]
+  
+  #Gaussian plume approach
+  points<-100000
+  
+  #---- using spherical coordinates -----------
+  
+  #randomly sampling attenuation ranges
+  tot <- length(dtPoint2$MeanAtten)
+  pA <- sum(dtPoint2$MeanAtten<=a) /tot
+  pB <- sum(dtPoint2$MeanAtten>a & dtPoint2$MeanAtten<=b) /tot
+  pC <- sum(dtPoint2$MeanAtten>b) /tot
+  
+  attenuation<-sample(c("<=a",">a & <=b", ">b"),points,replace=TRUE)
+  rho<-rep(NA,points)
+  
+  WhichA <- which(dtPoint2$MeanAtten <= a)
+  WhichAB <- which(dtPoint2$MeanAtten > a & dtPoint2$MeanAtten <= b)
+  WhichBC <- which(dtPoint2$MeanAtten > b)
+  
+  SampA <- dtPoint2[sample(WhichA, length(rho[attenuation=="<=a"]), replace = TRUE), ]
+  SampAB <- dtPoint2[sample(WhichAB, length(rho[attenuation==">a & <=b"]), replace = TRUE), ]
+  SampBC <- dtPoint2[sample(WhichBC, length(rho[attenuation==">b"]), replace = TRUE), ]
+  
+  rho[attenuation=="<=a"]<- SampA$Distance
+  rho[attenuation==">a & <=b"]<-SampAB$Distance
+  rho[attenuation==">b"]<-SampBC$Distance
+  # 
+  # rho[attenuation=="<=a"]<-sample(dtPoint2$Distance[dtPoint2$MeanAtten<=a],length(rho[attenuation=="<=a"]),replace=TRUE)
+  # rho[attenuation==">a & <=b"]<-sample(dtPoint2$Distance[dtPoint2$MeanAtten>a & dtPoint2$MeanAtten<=b],length(rho[attenuation==">a & <=b"]),replace=TRUE)
+  # rho[attenuation==">b"]<-sample(dtPoint2$Distance[dtPoint2$MeanAtten>b],length(rho[attenuation==">b"]),replace=TRUE)
+  # 
+  #randomly sampling phi and theta
+  phi<-rep(NA,points)
+  theta<-rep(NA,points)
+  
+  phi[rho<=1]<-pi/2
+  phi[rho>1]<- rtriangle(n = length(phi[rho>1]), a = pi/4, b = 3*pi/4, c = pi/2) #runif(length(phi[rho>1]), 0, pi)
+  
+  theta[rho<=1]<-0
+  theta[rho>1]<-runif(length(theta[rho>1]),0,2*pi)
+  
+  #convert to Cartesian for plume equation 
+  x<-rho*sin(phi)*cos(theta)
+  y<-rho*sin(phi)*sin(theta)
+  z<-rep(NA,points)
+  z[rho>1]<-rho[rho>1]*cos(phi[rho>1])
+  z[rho<=1]<-0
+  
+  #source of plume is at (0,0,0)
+  
+  #check on distances...
+  test<-4
+  sqrt(x[test]^2 + y[test]^2 + z[test]^2)
+  rho[test]
+  
+  #holding constant for weight setting
+  C.emit<-50 #in arbitrary units
+  
+  #exhalation rates
+  X<-(rtrunc(points,"norm",a=truncPoint,mean=16.3,sd=4.15)/(24*60*60))
+  
+  Q<-C.emit * X #viral particles/m^3 x m^3/s exhalation rates (Exposure Factors Handbook)
+  
+  #U = (m^3 / s) / m^2 of cross sectional area --> m/s
+  #A (surface area of mouth cross sectional) - large bite
+  A<-runif(points,23,59)/(100^2) #convert from cm^2 to m^2
+  U<-X/A
+  
+  
+  #moderately stable
+  I.y<-runif(points,0.08,0.25)
+  I.z<-runif(points,0.03,0.07)
+  
+  omega.y<-rep(NA,points)
+  omega.z<-rep(NA,points)
+  
+  omega.y[x>0]<-I.y[x>0]*x[x>0]
+  omega.z[x>0]<-I.z[x>0]*x[x>0]
+  
+  #concentration at given x, y, z points
+  C<-rep(NA,points)
+  C[x>0]<-(Q[x>0]/U[x>0])*(1/(2*pi*omega.y[x>0]*omega.z[x>0]*1))*exp(-y[x>0]^2/(2*omega.y[x>0]^2))*exp(-z[x>0]^2/(2*omega.z[x>0]^2))
+  C[x<=0]<-0
+  
+  I<-(rtrunc(points,"norm",a=truncPoint,mean=16.3,sd=4.15)/(24*60))
+  
+  duration<-30 #placeholder just so units make sense
+  
+  #viral particles/m^3 x m^3/min x min
+  Dose<-C*I*duration
+  
+  frame<-data.frame(x=x,y=y,z=z,C=C,rho=rho,theta=theta,phi=phi,attenuation=attenuation,Dose=Dose,
+                    omega.y=omega.y,omega.z=omega.z,Q.U=Q/U,I=I,X=X,A=A)
+  
+  frame$Dose[frame$attenuation == "<=a"] <- (!SampA$Block) * frame$Dose[frame$attenuation == "<=a"]
+  frame$Dose[frame$attenuation == ">a & <=b"] <- (!SampAB$Block) * frame$Dose[frame$attenuation == ">a & <=b"]
+  frame$Dose[frame$attenuation == ">b"] <- (!SampBC$Block) * frame$Dose[frame$attenuation == ">b"]
+  #print((sum(SampA$BlockingBarrier) + sum(SampAB$BlockingBarrier) + sum(SampBC$BlockingBarrier))/100000)
+  
+  dtA <- frame %>% filter(attenuation == "<=a")
+  
+  dtB <- frame %>% filter(attenuation == ">a & <=b")
+  
+  dtC <- frame %>% filter(attenuation == ">b")
+  
+  ExDA <- mean(dtA$Dose)
+  ExDB <- mean(dtB$Dose)
+  ExDC <- mean(dtC$Dose)
+  
+  DistOut <- sqrt( (2*pA*pB)*((ExDA - ExDB)^2) + (2*pB*pC)*((ExDB - ExDC)^2) + (2*pC*pA)*((ExDC - ExDA)^2))
+  #data.frame(ExpDose = c(ExDA,ExDB,ExDC), LocProb = c(pA,pB,pC),Metric = rep(DistOut,3))
+  return(DistOut)#data.frame(ExpDose = c(ExDA,ExDB,ExDC), BinFreq = c(pA,pB,pC),Metric = rep(DistOut,3)))
+}
+
+```
+
+
+Random sampling for the thresholds
+
+```{r}
+nextfun <- function(x) {
+  a = sample(32:100,1) # These values are arbitrary, but it helps to keep them in the bulk of the (pseudo)data 31.5 < a, b < 110
+  b = sample((a+10):110,1) # Gap of 10 for sensitivity purposes
+  return(c(a,b))
+}
+
+```
+
+Add a percentage of blocked observations
+
+```{r}
+#4 copies is 5%, 8 for 10%
+NBlock <- 4
+
+for (k in 1:NBlock) {
+  dtPoint2 <- rbind(dtPoint2, dtBlock)
+}
+
+print(sum(dtPoint2$BlockingBarrier)/length(dtPoint2$Distance)) # 4.85%
+
+```
+
+
+This is an annoying little monster that errors out depending on the sampling process due to some of the thresholds having quirky qualities regarding the observations contained in the generated bin.
+Basically click enough times that it runs
+Initializing threshold optimization process
+
+```{r}
+# Sampling thresholds
+tuples <- lapply(1:5, nextfun)
+
+# Sampling metric evaluation at thresholds
+luples <- sapply(tuples, InterOptAB)
+
+# Initializing dataframe
+df.uples <- data.frame(tup = matrix(unlist(tuples), nrow=length(tuples), byrow = T), out = luples)
+
+```
+
+Sample of 200 such pairs suffices
+```{r}
+# Same as before
+tuples <- lapply(1:5, nextfun)
+luples <- sapply(tuples, InterOptAB)
+
+# Binding
+df.uples <- rbind(df.uples, data.frame(tup = matrix(unlist(tuples), nrow=length(tuples), byrow = T), out = luples))
+
+# Output if you want to check progress
+df.uples
+```
+
+Sorting Process so that we can select the (approximately;sampling error) best thresholds:
+
+```{r}
+
+# Sorted list based on maximizing our weighted difference metric
+df.sorted <- df.uples[order(-df.uples$out),]
+
+# Selects the top 10 such thresholds and averages the metric over 100 samples
+# Obviously running more samples is possible, but this process is mostly heuristic as it should NOT be sensitive enough that small deviations matter; if they did, this entire model is worthless anyways (not a nice way to say it, but still).
+df.max <- head(df.sorted,10)
+df.maxtest <- df.max
+
+for (i in 1:length(df.max$out)) {
+  vec.pair <- c()
+  for (j in 1:100) {
+    vec.pair <- c(vec.pair, InterOptAB(c(df.max$tup.1[i],df.max$tup.2[i])))
+  }
+  df.maxtest$out[i] <- mean(vec.pair)
+}
+
+(df.mmax <- df.maxtest[order(-df.maxtest$out),])
+
+```
+
+
+```{r}
+InterOptAB(c(40,55))
+InterOptAB(c(40,60))
+InterOptAB(c(50,70))
+InterOptAB(c(55,100))
+```
+
+
+
+Expected Weights
+InterOptAB needs to be changed to output the dataframe rather than DistOut.
+```{r}
+InterOptAB(c(50,70))$ExpDose
+
+ExpDose <- c(0,0,0)
+N = 1000
+a_b <- c(50,70)
+
+for(i in 1:N) {
+  ExpDose <- ExpDose + InterOptAB(a_b)$ExpDose
+}
+
+ExpDose <- ExpDose/N
+```
+```{r}
+ExpDose
+```
+
