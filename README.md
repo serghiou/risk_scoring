@@ -1,4 +1,4 @@
-# risk_scoring - This repository contains code used to produce results in 
+# risk_scoring - This repository contains code used to produce results in "Quantifying SARS-CoV-2 infection risk within the Apple/Google exposure notification framework to inform quarantine recommendations," by AM Wilson, N Aviles, PI Beamer, Z Szabo, KC Ernst, and J Masel, available at: https://www.medrxiv.org/content/10.1101/2020.07.17.20156539v1
 
 # Files for Generating Figures
 
@@ -11,14 +11,14 @@ distance_dose_figure_v2.R
 ---------------------------
 This code is needed for generating Figure 2. No data are needed since the data needed for plotting are generated using this code.
 
-code for figures.R
+code for figures 3 and 4.R
 ------------------
 Code needed for generating Figures 3 and 4 in the manuscript
-Data needed for code generation can be found in risk_discount_data.csv and figure2_data.csv
+Data needed for code generation can be found in risk_discount_data.csv and figure4_data.csv
 
-risk_discount_data.csv and figure2_data.csv
+risk_discount_data.csv and figure4_data.csv
 -------------------------------------------
-Data needed to run the code for figures.R file. The risk_discount_data.csv file contains values used to calculate the discount on risk per day post-exposure where it is adjustable based on the assumed fraction of asymptomatics. The figure2_data.csv contains discounts per day with an assumed negative test on the 4th day post-exposure.
+Data needed to run the code for figures 3 and 4.R file. The risk_discount_data.csv file contains values used to calculate the discount on risk per day post-exposure where it is adjustable based on the assumed fraction of asymptomatics. The figure4_data.csv contains discounts per day with an assumed negative test on the 4th day post-exposure.
 
 evaluation of transmission risk levels_v2.R
 --------------------------------------------
