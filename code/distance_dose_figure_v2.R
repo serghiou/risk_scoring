@@ -233,7 +233,7 @@ distance_dose_figure_v2 <-
   mutate(is_coarse = is_coarse == 1)
 
 # Save
-write_csv(distance_dose_figure_v2, "distance-dose-figure-v2.csv")
+write_csv(distance_dose_figure_v2, "output/distance-dose-figure-v2.csv")
 
 
 # Plot --------------------------------------------------------------------
