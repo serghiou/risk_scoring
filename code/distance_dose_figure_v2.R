@@ -298,7 +298,7 @@ distance_dose_figure_v2 %>%
   guides(alpha = FALSE)
 
 # Save
-ggsave("distance-dose-figure-v2_original.jpg")
+ggsave("output/distance-dose-figure-v2_original.jpg")
 
 
 # Updated
@@ -333,4 +333,4 @@ distance_dose_figure_v2 %>%
   guides(alpha = F)
 
 # Save
-ggsave("distance-dose-figure-v2_updated.jpg")
+ggsave("output/distance-dose-figure-v2_updated.jpg")
